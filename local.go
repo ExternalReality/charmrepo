@@ -57,7 +57,11 @@ func (r *LocalRepository) Resolve(ref *charm.URL) (*charm.URL, []string, error) 
 	}
 	// This is strictly speaking unnecessary, but just in case a bad charm is
 	// used locally, we'll check the series.
-	_, err = charm.SeriesForCharm(ref.Series, ch.Meta().Series)
+	supportedSeries := ch.Meta().Series
+	if len(supportedSeries) == 0 {
+		supportedSeries = append(supportedSeries, ref.Series)
+	}
+	_, err = charm.SeriesForCharm(ref.Series, supportedSeries)
 	if err != nil {
 		return nil, nil, err
 	}
